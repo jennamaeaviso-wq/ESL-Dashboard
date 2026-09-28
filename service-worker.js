@@ -4,8 +4,8 @@ const APP_FILES = [
   "/ESL-Dashboard/",
   "/ESL-Dashboard/index.html",
   "/ESL-Dashboard/manifest.json",
-  "/ESL-Dashboard/icons/icon-192.png",
-  "/ESL-Dashboard/icons/icon-512.png"
+  "/ESL-Dashboard/icon-192.png",
+  "/ESL-Dashboard/icon-512.png"
 ];
 
 self.addEventListener("install", event => {
