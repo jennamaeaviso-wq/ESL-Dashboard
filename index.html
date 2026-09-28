@@ -1,53 +1,317 @@
-const CACHE_NAME = "esl-tutor-dashboard-v2";
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
 
-const APP_FILES = [
-  "./",
-  "./index.html",
-  "./manifest.json",
-  "./icons/icon-192.png",
-  "./icons/icon-512.png"
-];
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+  >
 
-self.addEventListener("install", event => {
-  event.waitUntil(
-    caches.open(CACHE_NAME).then(cache => {
-      return cache.addAll(APP_FILES);
-    })
-  );
+  <meta name="theme-color" content="#b8d8c0">
 
-  self.skipWaiting();
-});
+  <meta
+    name="description"
+    content="ESL Tutor Dashboard"
+  >
 
-self.addEventListener("activate", event => {
-  event.waitUntil(
-    caches.keys().then(keys => {
-      return Promise.all(
-        keys
-          .filter(key => key !== CACHE_NAME)
-          .map(key => caches.delete(key))
-      );
-    })
-  );
+  <link rel="manifest" href="./manifest.json">
 
-  self.clients.claim();
-});
+  <link
+    rel="icon"
+    type="image/png"
+    sizes="192x192"
+    href="./icon-192.png"
+  >
 
-self.addEventListener("fetch", event => {
-  if (event.request.method !== "GET") return;
+  <link
+    rel="apple-touch-icon"
+    href="./icon-192.png"
+  >
 
-  event.respondWith(
-    fetch(event.request)
-      .then(response => {
-        if (response && response.status === 200) {
-          const copy = response.clone();
+  <title>ESL Tutor Dashboard</title>
 
-          caches.open(CACHE_NAME).then(cache => {
-            cache.put(event.request, copy);
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      font-family: Arial, sans-serif;
+      background: #f5faf6;
+    }
+
+    #appFrame {
+      display: none;
+      width: 100%;
+      height: 100%;
+      border: 0;
+      background: #ffffff;
+    }
+
+    #setup {
+      width: 100%;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      background: #f5faf6;
+    }
+
+    .setup-card {
+      width: 100%;
+      max-width: 520px;
+      background: #ffffff;
+      border-radius: 24px;
+      padding: 30px;
+      box-shadow: 0 10px 35px rgba(0, 0, 0, 0.08);
+      text-align: center;
+    }
+
+    .logo {
+      width: 100px;
+      height: 100px;
+      object-fit: contain;
+      margin-bottom: 18px;
+    }
+
+    h1 {
+      margin: 0 0 10px;
+      color: #23483b;
+      font-size: 28px;
+    }
+
+    .subtitle {
+      margin: 0 0 24px;
+      color: #68766f;
+      line-height: 1.5;
+      font-size: 15px;
+    }
+
+    label {
+      display: block;
+      text-align: left;
+      margin-bottom: 8px;
+      color: #23483b;
+      font-weight: 600;
+      font-size: 14px;
+    }
+
+    input {
+      width: 100%;
+      padding: 14px 15px;
+      border: 1px solid #d6e4db;
+      border-radius: 12px;
+      outline: none;
+      font-size: 14px;
+      background: #fbfdfc;
+    }
+
+    input:focus {
+      border-color: #9fc8b1;
+      box-shadow: 0 0 0 3px rgba(159, 200, 177, 0.18);
+    }
+
+    button {
+      width: 100%;
+      margin-top: 16px;
+      padding: 14px 18px;
+      border: 0;
+      border-radius: 12px;
+      background: #b8d8c0;
+      color: #18372c;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    button:active {
+      transform: scale(0.99);
+    }
+
+    .help {
+      margin-top: 18px;
+      font-size: 12px;
+      line-height: 1.5;
+      color: #7a857f;
+    }
+
+    .error {
+      display: none;
+      margin-top: 12px;
+      padding: 10px 12px;
+      border-radius: 10px;
+      background: #fff0f0;
+      color: #a33a3a;
+      font-size: 13px;
+      text-align: left;
+    }
+
+    @media (max-width: 600px) {
+      .setup-card {
+        padding: 24px 20px;
+        border-radius: 20px;
+      }
+
+      h1 {
+        font-size: 24px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div id="setup">
+    <div class="setup-card">
+
+      <img
+        class="logo"
+        src="./icon-192.png"
+        alt="ESL Tutor Dashboard"
+      >
+
+      <h1>ESL Tutor Dashboard</h1>
+
+      <p class="subtitle">
+        Connect your Google Apps Script dashboard to open it as your
+        installable ESL Tutor app.
+      </p>
+
+      <label for="appsScriptUrl">
+        Google Apps Script Web App URL
+      </label>
+
+      <input
+        id="appsScriptUrl"
+        type="url"
+        placeholder="https://script.google.com/macros/s/...../exec"
+        autocomplete="off"
+        spellcheck="false"
+      >
+
+      <button id="openButton">
+        Open ESL Dashboard
+      </button>
+
+      <div id="error" class="error"></div>
+
+      <div class="help">
+        Use the deployed Google Apps Script Web App URL that ends with
+        <strong>/exec</strong>.
+      </div>
+
+    </div>
+  </div>
+
+  <iframe
+    id="appFrame"
+    title="ESL Tutor Dashboard"
+    allow="clipboard-read; clipboard-write"
+    referrerpolicy="no-referrer-when-downgrade"
+  ></iframe>
+
+  <script>
+    const STORAGE_KEY = "eslTutorAppsScriptUrl";
+
+    const setup = document.getElementById("setup");
+    const frame = document.getElementById("appFrame");
+    const input = document.getElementById("appsScriptUrl");
+    const button = document.getElementById("openButton");
+    const errorBox = document.getElementById("error");
+
+    function showError(message) {
+      errorBox.textContent = message;
+      errorBox.style.display = "block";
+    }
+
+    function hideError() {
+      errorBox.textContent = "";
+      errorBox.style.display = "none";
+    }
+
+    function isValidAppsScriptUrl(value) {
+      try {
+        const url = new URL(value);
+
+        return (
+          url.protocol === "https:" &&
+          (
+            url.hostname === "script.google.com" ||
+            url.hostname.endsWith(".google.com")
+          ) &&
+          url.pathname.includes("/macros/s/")
+        );
+      } catch (error) {
+        return false;
+      }
+    }
+
+    function openDashboard(url) {
+      hideError();
+
+      const cleanUrl = url.trim();
+
+      if (!isValidAppsScriptUrl(cleanUrl)) {
+        showError(
+          "Please enter a valid Google Apps Script Web App URL ending in /exec."
+        );
+        return;
+      }
+
+      localStorage.setItem(STORAGE_KEY, cleanUrl);
+
+      setup.style.display = "none";
+      frame.style.display = "block";
+
+      frame.src = cleanUrl;
+    }
+
+    button.addEventListener("click", function () {
+      openDashboard(input.value);
+    });
+
+    input.addEventListener("keydown", function (event) {
+      if (event.key === "Enter") {
+        openDashboard(input.value);
+      }
+    });
+
+    const savedUrl = localStorage.getItem(STORAGE_KEY);
+
+    if (savedUrl && isValidAppsScriptUrl(savedUrl)) {
+      input.value = savedUrl;
+      openDashboard(savedUrl);
+    }
+
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", function () {
+        navigator.serviceWorker
+          .register("./service-worker.js", {
+            scope: "./"
+          })
+          .then(function (registration) {
+            console.log(
+              "ESL Tutor PWA service worker registered:",
+              registration.scope
+            );
+          })
+          .catch(function (error) {
+            console.error(
+              "ESL Tutor PWA service worker registration failed:",
+              error
+            );
           });
-        }
+      });
+    }
+  </script>
 
-        return response;
-      })
-      .catch(() => caches.match(event.request))
-  );
-});
+</body>
+</html>
