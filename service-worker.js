@@ -1,11 +1,11 @@
 const CACHE_NAME = "esl-tutor-dashboard-v3";
 
 const APP_FILES = [
-  "/ESL-Dashboard/",
-  "/ESL-Dashboard/index.html",
-  "/ESL-Dashboard/manifest.json",
-  "/ESL-Dashboard/icon-192.png",
-  "/ESL-Dashboard/icon-512.png"
+  "./",
+  "./index.html",
+  "./manifest.json",
+  "./icon-192.png",
+  "./icon-512.png"
 ];
 
 self.addEventListener("install", event => {
@@ -33,7 +33,9 @@ self.addEventListener("activate", event => {
 });
 
 self.addEventListener("fetch", event => {
-  if (event.request.method !== "GET") return;
+  if (event.request.method !== "GET") {
+    return;
+  }
 
   event.respondWith(
     fetch(event.request)
