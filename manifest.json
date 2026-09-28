@@ -1,26 +1,26 @@
 {
-  "id": "/ESL-Dashboard/",
+  "id": "https://jennamaeaviso-wq.github.io/ESL-Dashboard/",
   "name": "ESL Tutor Dashboard",
   "short_name": "ESL Tutor",
   "description": "ESL private tutor dashboard",
-  "start_url": "/ESL-Dashboard/",
-  "scope": "/ESL-Dashboard/",
+  "start_url": "https://jennamaeaviso-wq.github.io/ESL-Dashboard/",
+  "scope": "https://jennamaeaviso-wq.github.io/ESL-Dashboard/",
   "display": "standalone",
   "orientation": "portrait",
   "theme_color": "#b8d8c0",
   "background_color": "#f5faf6",
   "icons": [
     {
-      "src": "/ESL-Dashboard/icons/icon-192.png",
+      "src": "https://jennamaeaviso-wq.github.io/ESL-Dashboard/icons/icon-192.png",
       "sizes": "192x192",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
     },
     {
-      "src": "/ESL-Dashboard/icons/icon-512.png",
+      "src": "https://jennamaeaviso-wq.github.io/ESL-Dashboard/icons/icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
     }
   ]
 }
